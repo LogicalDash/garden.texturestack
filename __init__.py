@@ -144,7 +144,8 @@ class TextureStack(Widget):
         self.group.clear()
         self._texture_rectangles = {}
         self.texs = []
-        self.stackhs = []
+        self.offxs = []
+        self.offys = []
         self.size = [1, 1]
 
     def insert(self, i, tex):
@@ -158,6 +159,8 @@ class TextureStack(Widget):
                     self, i, tex), 0)
             return
         self.texs.insert(i, tex)
+        self.offxs.insert(i, 0)
+        self.offys.insert(i, 0)
 
     def append(self, tex):
         """``self.insert(len(self.texs), tex)``"""
@@ -172,7 +175,8 @@ class TextureStack(Widget):
             del self._texture_rectangles[tex]
         except KeyError:
             pass
-        del self.stackhs[i]
+        del self.offxs[i]
+        del self.offys[i]
         del self.texs[i]
 
     def __setitem__(self, i, v):
@@ -184,11 +188,11 @@ class TextureStack(Widget):
         self.insert(i, v)
 
     def pop(self, i=-1):
-        """Delete the stacking height and texture at ``i``, returning the
-        texture.
+        """Delete the offsets and texture at ``i``, returning the texture.
 
         """
-        self.stackhs.pop(i)
+        del self.offxs[i]
+        del self.offys[i]
         return self.texs.pop(i)
 
 
@@ -236,6 +240,8 @@ class ImageStack(TextureStack):
         if not isinstance(v, str):
             raise TypeError("Paths only")
         self.paths.insert(i, v)
+        self.offxs.insert(i, 0)
+        self.offys.insert(i, 0)
 
     def __delitem__(self, i):
         """Delete texture, rectangle, path"""
